@@ -6,6 +6,7 @@
             <file>file:/home/maarten/workspace/vscp/src/paris/main.c</file>
             <file>file:/home/maarten/workspace/vscp/src/common/pic/configuration.c</file>
             <file>file:/home/maarten/workspace/vscp/src/common/pic/discrete.h</file>
+            <file>file:/home/maarten/workspace/vscp/src/common/pic/configuration.h</file>
             <file>file:/home/maarten/workspace/vscp/src/common/pic/can.h</file>
         </group>
     </open-files>

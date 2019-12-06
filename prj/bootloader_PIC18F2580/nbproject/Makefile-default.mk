@@ -19,7 +19,7 @@ endif
 endif
 
 # Environment
-MKDIR=gnumkdir -p
+MKDIR=mkdir -p
 RM=rm -f 
 MV=mv 
 CP=cp 
@@ -44,6 +44,12 @@ else
 COMPARISON_BUILD=
 endif
 
+ifdef SUB_IMAGE_ADDRESS
+
+else
+SUB_IMAGE_ADDRESS_COMMAND=
+endif
+
 # Object Directory
 OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 
@@ -62,6 +68,7 @@ OBJECTFILES=${OBJECTDIR}/_ext/609767103/CANIO.o
 
 # Source Files
 SOURCEFILES=../../src/bootloader_pic18f2580/CANIO.asm
+
 
 
 CFLAGS=
@@ -92,7 +99,7 @@ ${OBJECTDIR}/_ext/609767103/CANIO.o: ../../src/bootloader_pic18f2580/CANIO.asm  
 	@${MKDIR} "${OBJECTDIR}/_ext/609767103" 
 	@${RM} ${OBJECTDIR}/_ext/609767103/CANIO.o.d 
 	@${RM} ${OBJECTDIR}/_ext/609767103/CANIO.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/_ext/609767103/CANIO.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_ICD3=1 -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/_ext/609767103/CANIO.lst\" -e\"${OBJECTDIR}/_ext/609767103/CANIO.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/_ext/609767103/CANIO.o\" \"../../src/bootloader_pic18f2580/CANIO.asm\" 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/_ext/609767103/CANIO.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_ICD3=1 -q -p$(MP_PROCESSOR_OPTION) -u  -l\\\"${OBJECTDIR}/_ext/609767103/CANIO.lst\\\" -e\\\"${OBJECTDIR}/_ext/609767103/CANIO.err\\\" $(ASM_OPTIONS)    -o\\\"${OBJECTDIR}/_ext/609767103/CANIO.o\\\" \\\"../../src/bootloader_pic18f2580/CANIO.asm\\\" 
 	@${DEP_GEN} -d "${OBJECTDIR}/_ext/609767103/CANIO.o"
 	@${FIXDEPS} "${OBJECTDIR}/_ext/609767103/CANIO.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
@@ -101,7 +108,7 @@ ${OBJECTDIR}/_ext/609767103/CANIO.o: ../../src/bootloader_pic18f2580/CANIO.asm  
 	@${MKDIR} "${OBJECTDIR}/_ext/609767103" 
 	@${RM} ${OBJECTDIR}/_ext/609767103/CANIO.o.d 
 	@${RM} ${OBJECTDIR}/_ext/609767103/CANIO.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/_ext/609767103/CANIO.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/_ext/609767103/CANIO.lst\" -e\"${OBJECTDIR}/_ext/609767103/CANIO.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/_ext/609767103/CANIO.o\" \"../../src/bootloader_pic18f2580/CANIO.asm\" 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/_ext/609767103/CANIO.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION) -u  -l\\\"${OBJECTDIR}/_ext/609767103/CANIO.lst\\\" -e\\\"${OBJECTDIR}/_ext/609767103/CANIO.err\\\" $(ASM_OPTIONS)    -o\\\"${OBJECTDIR}/_ext/609767103/CANIO.o\\\" \\\"../../src/bootloader_pic18f2580/CANIO.asm\\\" 
 	@${DEP_GEN} -d "${OBJECTDIR}/_ext/609767103/CANIO.o"
 	@${FIXDEPS} "${OBJECTDIR}/_ext/609767103/CANIO.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
@@ -135,7 +142,7 @@ endif
 # Enable dependency checking
 .dep.inc: .depcheck-impl
 
-DEPFILES=$(shell mplabwildcard ${POSSIBLE_DEPFILES})
+DEPFILES=$(shell "${PATH_TO_IDE_BIN}"mplabwildcard ${POSSIBLE_DEPFILES})
 ifneq (${DEPFILES},)
 include ${DEPFILES}
 endif

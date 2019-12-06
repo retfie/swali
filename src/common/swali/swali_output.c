@@ -13,7 +13,6 @@ static uint8_t reg_range(uint8_t reg);
 static uint8_t timer_on(swali_output_data_t * data);
 
 #define FLAG_ENABLE       0x80
-#define FLAG_MASTER       0x40
 #define FLAG_INVERT       0x20
 
 #define REG_ID0           0x00 // read only
@@ -23,11 +22,10 @@ static uint8_t timer_on(swali_output_data_t * data);
 #define REG_ZONE          0x04 // R/W
 #define REG_SUBZONE       0x05 // R/W
 #define REG_INVERT        0x07 // R/W  1 = invert
-#define REG_MASTER        0x08 // R/W  1 = master
-#define REG_ON_TIME_HRS   0x09 // R/W
-#define REG_ON_TIME_MINS  0x0A // R/W  HRS==0 && MINS==0 > no timer
-#define REG_ACT_TIME_HRS  0x0B // R
-#define REG_ACT_TIME_MINS 0x0C // R
+#define REG_ON_TIME_HRS   0x08 // R/W
+#define REG_ON_TIME_MINS  0x09 // R/W  HRS==0 && MINS==0 > no timer
+#define REG_ACT_TIME_HRS  0x0A // R
+#define REG_ACT_TIME_MINS 0x0B // R
 #define REG_NAME          0x10 // R/W max 16chars
 
 void swali_output_initialize(uint8_t swali_channel, swali_output_config_t * config, swali_output_data_t * data)
@@ -74,22 +72,20 @@ void swali_output_process(swali_output_data_t * data)
         data->on_time_mins = 0;
     }
 
-    if (data->config->flags & FLAG_MASTER)
+    if (timer_on(data) &&
+            (data->on_time_hrs == data->config->on_time_hrs) &&
+            (data->on_time_mins == data->config->on_time_mins))
     {
-        if (timer_on(data) &&
-                (data->on_time_hrs == data->config->on_time_hrs) &&
-                (data->on_time_mins == data->config->on_time_mins))
-        {
-            data->state = 0; // turn off, timer expired!
-        }
-
-        // internal state changed (incoming event/timer), 
-        // send an information event
-        if (data->last_state != data->state)
-        {
-            send_info_event(data);
-        }
+        data->state = 0; // turn off, timer expired!
     }
+
+    // internal state changed (incoming event/timer), 
+    // send an information event
+    if (data->last_state != data->state)
+    {
+        send_info_event(data);
+    }
+
     update_output(data);
     data->last_state = data->state;
 }
@@ -100,57 +96,39 @@ void swali_output_handle_event(swali_output_data_t * data, vscp_event_t * event)
     if (!(data->config->flags & FLAG_ENABLE))
         return;
 
-    if (data->config->flags & FLAG_MASTER)
+    // output channels get to process control events
+    if ((event->vscp_class == VSCP_CLASS1_CONTROL) &&
+            (event->size == 3) &&
+            (data->config->zone == event->data[1]) &&
+            ((data->config->subzone == event->data[2]) ||
+            (255 == event->data[2])))
     {
-        // MASTER channels get to process control events
-        if ((event->vscp_class == VSCP_CLASS1_CONTROL) &&
-                (event->size == 3) &&
-                (data->config->zone == event->data[1]) &&
-                ((data->config->subzone == event->data[2]) ||
-                (255 == event->data[2])))
+        if (event->vscp_type == VSCP_TYPE_CONTROL_TURNOFF)
         {
-            if (event->vscp_type == VSCP_TYPE_CONTROL_TURNOFF)
+            if (data->state == 1)
             {
-                if (data->state == 1)
-                {
-                    data->state = 0; // switch the state off
-                }
-                else
-                {
-                    // a slave was not synchronized, this ensures an info update
-                    // is sent out on the next process cycle
-                    data->last_state = 1;
-                }
+                data->state = 0; // switch the state off
+            }
+            else
+            {
+                // a slave was not synchronized, this ensures an info update
+                // is sent out on the next process cycle
+                data->last_state = 1;
+            }
 
-            }
-            if (event->vscp_type == VSCP_TYPE_CONTROL_TURNON)
-            {
-                if (data->state == 0)
-                {
-                    data->state = 1; // switch the state on
-                }
-                else
-                {
-                    // a slave was not synchronized, this ensures an info update
-                    // is sent out on the next process cycle
-                    data->last_state = 0;
-                }
-            }
         }
-    }
-    else
-    {
-        // SLAVES get to process info events
-        if ((event->vscp_class == VSCP_CLASS1_INFORMATION) &&
-                (event->size == 3) &&
-                (data->config->zone == event->data[1]) &&
-                (data->config->subzone == event->data[2]))
+        if (event->vscp_type == VSCP_TYPE_CONTROL_TURNON)
         {
-            if (event->vscp_type == VSCP_TYPE_INFORMATION_ON)
-                data->state = 1;
-
-            if (event->vscp_type == VSCP_TYPE_INFORMATION_OFF)
-                data->state = 0;
+            if (data->state == 0)
+            {
+                data->state = 1; // switch the state on
+            }
+            else
+            {
+                // a slave was not synchronized, this ensures an info update
+                // is sent out on the next process cycle
+                data->last_state = 0;
+            }
         }
     }
 }
@@ -170,9 +148,6 @@ void swali_output_write_reg(swali_output_data_t * data, uint8_t reg, uint8_t val
         break;
     case REG_INVERT:
         write_flag(data, FLAG_INVERT, value);
-        break;
-    case REG_MASTER:
-        write_flag(data, FLAG_MASTER, value);
         break;
     case REG_ON_TIME_HRS:
         data->config->on_time_hrs = value;
@@ -212,9 +187,6 @@ uint8_t swali_output_read_reg(swali_output_data_t * data, uint8_t reg)
         break;
     case REG_INVERT:
         value = read_flag(data, FLAG_INVERT);
-        break;
-    case REG_MASTER:
-        value = read_flag(data, FLAG_MASTER);
         break;
     case REG_ON_TIME_HRS:
         value = data->config->on_time_hrs;

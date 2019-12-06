@@ -30,7 +30,6 @@ static void write_flag(swali_input_data_t * data, uint8_t flag, uint8_t value);
 static uint8_t read_flag(swali_input_data_t * data, uint8_t flag);
 
 #define FLAG_ENABLE       0x80
-#define FLAG_MASTER       0x40
 #define FLAG_INVERT       0x20
 #define FLAG_TYPE_DIM     0x02 // provision for handling dimmers
 #define FLAG_TYPE_TOGGLE  0x01
@@ -43,7 +42,6 @@ static uint8_t read_flag(swali_input_data_t * data, uint8_t flag);
 #define REG_SUBZONE       0x05 // R/W
 #define REG_TYPE          0x06 // R/W  0 = pushbutton, 1 = toggle switch
 #define REG_INVERT        0x07 // R/W  1 = invert
-#define REG_MASTER        0x08 // R/W  1 = master
 
 #define SAMPLE_MODULUS    8
 
@@ -52,7 +50,6 @@ void swali_input_initialize(uint8_t swali_channel, swali_input_config_t * config
     data->swali_channel = swali_channel;
     data->config = config;
     data->state = 0;
-    data->last_state = 0;
     data->last_switch_state = 0;
     data->switch_shifter = 0;
 }
@@ -82,13 +79,6 @@ void swali_input_process(swali_input_data_t * data)
         }
         data->last_switch_state = 0;
     }
-
-    // internal state changed for a master, send an information event
-    if ((data->last_state != data->state) && (data->config->flags & FLAG_MASTER))
-    {
-        send_info_event(data, data->state);
-    }
-    data->last_state = data->state;
 }
 
 // DO NOT send events from this function as it would cause recursion
@@ -100,58 +90,17 @@ void swali_input_handle_event(swali_input_data_t * data, vscp_event_t * event)
     if (!(data->config->flags & FLAG_ENABLE))
         return;
 
-    if (data->config->flags & FLAG_MASTER)
+    // inputs/slaves get to process info events
+    if ((event->vscp_class == VSCP_CLASS1_INFORMATION) &&
+            (event->size == 3) &&
+            (data->config->zone == event->data[1]) &&
+            (data->config->subzone == event->data[2]))
     {
-        // MASTER channels get to process control events    
-        if ((event->vscp_class == VSCP_CLASS1_CONTROL) &&
-                (event->size == 3) &&
-                (data->config->zone == event->data[1]) &&
-                ((data->config->subzone == event->data[2]) || 
-                (255 == event->data[2])))
-        {
-            if (event->vscp_type == VSCP_TYPE_CONTROL_TURNOFF)
-            {
-                if (data->state == 1)
-                {
-                    data->state = 0; // switch the state off
-                }
-                else
-                {
-                    // a slave was not syncrhonized, this ensures an info update
-                    // is sent out on the next process cycle
-                    data->last_state = 1;
-                }
+        if (event->vscp_type == VSCP_TYPE_INFORMATION_ON)
+            data->state = 1;
 
-            }
-            if (event->vscp_type == VSCP_TYPE_CONTROL_TURNON)
-            {
-                if (data->state == 0)
-                {
-                    data->state = 1; // switch the state on
-                }
-                else
-                {
-                    // a slave was not syncrhonized, this ensures an info update
-                    // is sent out on the next process cycle
-                    data->last_state = 0;
-                }
-            }
-        }
-    }
-    else
-    {
-        // SLAVES get to process info events
-        if ((event->vscp_class == VSCP_CLASS1_INFORMATION) &&
-                (event->size == 3) &&
-                (data->config->zone == event->data[1]) &&
-                (data->config->subzone == event->data[2]))
-        {
-            if (event->vscp_type == VSCP_TYPE_INFORMATION_ON)
-                data->state = 1;
-
-            if (event->vscp_type == VSCP_TYPE_INFORMATION_OFF)
-                data->state = 0;
-        }
+        if (event->vscp_type == VSCP_TYPE_INFORMATION_OFF)
+            data->state = 0;
     }
 }
 
@@ -177,10 +126,6 @@ void swali_input_write_reg(swali_input_data_t * data, uint8_t reg, uint8_t value
 
     case REG_INVERT:
         write_flag(data, FLAG_INVERT, value);
-        break;
-
-    case REG_MASTER:
-        write_flag(data, FLAG_MASTER, value);
         break;
     }
 }
@@ -214,9 +159,6 @@ uint8_t swali_input_read_reg(swali_input_data_t * data, uint8_t reg)
         break;
     case REG_INVERT:
         value = read_flag(data, FLAG_INVERT);
-        break;
-    case REG_MASTER:
-        value = read_flag(data, FLAG_MASTER);
         break;
     }
     return value;
@@ -256,24 +198,6 @@ static void send_button_event(swali_input_data_t * data, uint8_t state)
     tx_event.data[2] = 255; // all subzones;
     tx_event.data[3] = 0; //MSB always 0
     tx_event.data[4] = data->swali_channel; //this channel
-    swali_send_event(&tx_event);
-}
-
-static void send_info_event(swali_input_data_t * data, uint8_t state)
-{
-    vscp_event_t tx_event;
-    // send on or off control event
-    tx_event.priority = VSCP_PRIORITY_MEDIUM;
-    tx_event.vscp_class = VSCP_CLASS1_INFORMATION;
-    if (state)
-        tx_event.vscp_type = VSCP_TYPE_INFORMATION_ON;
-    else
-        tx_event.vscp_type = VSCP_TYPE_INFORMATION_OFF;
-    tx_event.size = 3;
-    tx_event.data[0] = data->swali_channel;
-    tx_event.data[1] = data->config->zone;
-    tx_event.data[2] = data->config->subzone;
-
     swali_send_event(&tx_event);
 }
 

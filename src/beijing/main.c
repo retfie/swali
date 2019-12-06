@@ -56,7 +56,7 @@ int main()
     initialize_config_data();
     can_init();
     vscp_init(vscp_message_handler, swali_event_handler);
-    swali_init(config_swali, sizeof(config_data) - CONFIG_SWALI);
+    swali_init(config_swali, (uint8_t)(config_data_size - CONFIG_SWALI));
     while (1)
     {
         vscp_process(process_button());
