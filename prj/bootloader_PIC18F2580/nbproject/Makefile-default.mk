@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../../src/bootloader_pic18f2580/CANIO.asm
+SOURCEFILES_QUOTED_IF_SPACED=../../src/bootloader_pic18f2580/canio.asm
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/609767103/CANIO.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/609767103/CANIO.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/609767103/canio.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/609767103/canio.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/609767103/CANIO.o
+OBJECTFILES=${OBJECTDIR}/_ext/609767103/canio.o
 
 # Source Files
-SOURCEFILES=../../src/bootloader_pic18f2580/CANIO.asm
+SOURCEFILES=../../src/bootloader_pic18f2580/canio.asm
 
 
 
@@ -95,22 +95,22 @@ MP_LINKER_DEBUG_OPTION=-r=ROM@0x7DC0:0x7FFF -r=RAM@GPR:0x5F4:0x5FF
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/_ext/609767103/CANIO.o: ../../src/bootloader_pic18f2580/CANIO.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/_ext/609767103/canio.o: ../../src/bootloader_pic18f2580/canio.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/609767103" 
-	@${RM} ${OBJECTDIR}/_ext/609767103/CANIO.o.d 
-	@${RM} ${OBJECTDIR}/_ext/609767103/CANIO.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/_ext/609767103/CANIO.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_ICD3=1 -q -p$(MP_PROCESSOR_OPTION) -u  -l\\\"${OBJECTDIR}/_ext/609767103/CANIO.lst\\\" -e\\\"${OBJECTDIR}/_ext/609767103/CANIO.err\\\" $(ASM_OPTIONS)    -o\\\"${OBJECTDIR}/_ext/609767103/CANIO.o\\\" \\\"../../src/bootloader_pic18f2580/CANIO.asm\\\" 
-	@${DEP_GEN} -d "${OBJECTDIR}/_ext/609767103/CANIO.o"
-	@${FIXDEPS} "${OBJECTDIR}/_ext/609767103/CANIO.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/_ext/609767103/canio.o.d 
+	@${RM} ${OBJECTDIR}/_ext/609767103/canio.o 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/_ext/609767103/canio.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_ICD3=1 -q -p$(MP_PROCESSOR_OPTION) -u  -l\\\"${OBJECTDIR}/_ext/609767103/canio.lst\\\" -e\\\"${OBJECTDIR}/_ext/609767103/canio.err\\\" $(ASM_OPTIONS)    -o\\\"${OBJECTDIR}/_ext/609767103/canio.o\\\" \\\"../../src/bootloader_pic18f2580/canio.asm\\\" 
+	@${DEP_GEN} -d "${OBJECTDIR}/_ext/609767103/canio.o"
+	@${FIXDEPS} "${OBJECTDIR}/_ext/609767103/canio.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 else
-${OBJECTDIR}/_ext/609767103/CANIO.o: ../../src/bootloader_pic18f2580/CANIO.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/_ext/609767103/canio.o: ../../src/bootloader_pic18f2580/canio.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/609767103" 
-	@${RM} ${OBJECTDIR}/_ext/609767103/CANIO.o.d 
-	@${RM} ${OBJECTDIR}/_ext/609767103/CANIO.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/_ext/609767103/CANIO.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION) -u  -l\\\"${OBJECTDIR}/_ext/609767103/CANIO.lst\\\" -e\\\"${OBJECTDIR}/_ext/609767103/CANIO.err\\\" $(ASM_OPTIONS)    -o\\\"${OBJECTDIR}/_ext/609767103/CANIO.o\\\" \\\"../../src/bootloader_pic18f2580/CANIO.asm\\\" 
-	@${DEP_GEN} -d "${OBJECTDIR}/_ext/609767103/CANIO.o"
-	@${FIXDEPS} "${OBJECTDIR}/_ext/609767103/CANIO.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/_ext/609767103/canio.o.d 
+	@${RM} ${OBJECTDIR}/_ext/609767103/canio.o 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/_ext/609767103/canio.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION) -u  -l\\\"${OBJECTDIR}/_ext/609767103/canio.lst\\\" -e\\\"${OBJECTDIR}/_ext/609767103/canio.err\\\" $(ASM_OPTIONS)    -o\\\"${OBJECTDIR}/_ext/609767103/canio.o\\\" \\\"../../src/bootloader_pic18f2580/canio.asm\\\" 
+	@${DEP_GEN} -d "${OBJECTDIR}/_ext/609767103/canio.o"
+	@${FIXDEPS} "${OBJECTDIR}/_ext/609767103/canio.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 endif
 
