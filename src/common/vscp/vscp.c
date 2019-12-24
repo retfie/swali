@@ -586,7 +586,7 @@ static void vscp_process_protocol_event(vscp_event_t * event)
         if (event->data[0] == nickname)
         {
             uint16_t bytes;
-            uint8_t byte = 0;
+            uint16_t byte = 0;
             uint8_t bytes_this_time;
             uint16_t vscp_page;
 
