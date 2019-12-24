@@ -822,10 +822,10 @@ static uint8_t vscp_get_reg_std_value(uint8_t reg)
 
     case VSCP_REG_BUFFER_SIZE:
         value = 0;
+        break;
 
     case VSCP_REG_PAGES_USED:
-        // deprecated. Read the MDF.
-        value = 0;
+        vscp_get_msg_value(VSCP_MSG_PAGES_USED, 0, &value);
         break;
 
     case VSCP_REG_STANDARD_DEVICE_FAMILY_CODE: // 8 bytes!

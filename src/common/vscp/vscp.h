@@ -46,6 +46,7 @@ extern "C" {
 #define VSCP_MSG_FWVERSION           0x0B
 #define VSCP_MSG_STD_DEVICE          0x0C // FAMILY+SUBFAMILY
 #define VSCP_MSG_RESET_CONFIG        0x0D
+#define VSCP_MSG_PAGES_USED          0x0E
     
     
     // Value for VSCP_MSG_SETSTATE 

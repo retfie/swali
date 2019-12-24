@@ -24,6 +24,7 @@
 #include "pic_swali.h"
 #include "led.h"
 #include "swali.h"
+#include "swali_config.h"
 
 const uint8_t vscp_node_mdf[32] = "use local";
 const uint8_t vscp_std_id[8] = "SWALI";
@@ -129,6 +130,11 @@ void vscp_message_handler(vscp_message_t * message)
 
     case VSCP_SET | VSCP_MSG_REGVALUE:
         swali_write_reg((message->value[1] << 8) | message->value[2], message->value[0], message->value[3]);    
+        break;
+                    
+    case VSCP_GET | VSCP_MSG_PAGES_USED:
+        message->value[1] = SWALI_NUM_INPUTS + SWALI_NUM_OUTPUTS;
+        message->length = 2;
         break;
 
     case VSCP_GET | VSCP_MSG_GUID:
