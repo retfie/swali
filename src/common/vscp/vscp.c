@@ -837,7 +837,7 @@ static uint8_t vscp_get_reg_std_value(uint8_t reg)
         break;
 
     case VSCP_REG_DEVICE_URL:
-        value = vscp_guid(reg - VSCP_REG_DEVICE_URL);
+        value = vscp_mdf(reg - VSCP_REG_DEVICE_URL);
         break;
 
     }
