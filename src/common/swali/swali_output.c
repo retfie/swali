@@ -6,7 +6,7 @@
 #include "time.h"
 
 static void send_info_event(swali_output_data_t * data);
-static void send_control_event(swali_input_data_t * data);
+static void send_control_event(swali_output_data_t * data);
 static void update_output(swali_output_data_t * data);
 static void write_flag(swali_output_data_t * data, uint8_t flag, uint8_t value);
 static uint8_t read_flag(swali_output_data_t * data, uint8_t flag);
@@ -210,7 +210,7 @@ uint8_t swali_output_read_reg(swali_output_data_t * data, uint8_t reg)
     return value;
 }
 
-static void send_control_event(swali_input_data_t * data)
+static void send_control_event(swali_output_data_t * data)
 {
     vscp_event_t tx_event;
 
