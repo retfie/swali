@@ -6,6 +6,7 @@
 #include "time.h"
 
 static void send_info_event(swali_output_data_t * data);
+static void send_control_event(swali_input_data_t * data);
 static void update_output(swali_output_data_t * data);
 static void write_flag(swali_output_data_t * data, uint8_t flag, uint8_t value);
 static uint8_t read_flag(swali_output_data_t * data, uint8_t flag);
@@ -72,11 +73,12 @@ void swali_output_process(swali_output_data_t * data)
         data->on_time_mins = 0;
     }
 
+    /* timer expired, send an event to turn off all outputs */
     if (timer_on(data) &&
             (data->on_time_hrs == data->config->on_time_hrs) &&
             (data->on_time_mins == data->config->on_time_mins))
     {
-        data->state = 0; // turn off, timer expired!
+        send_control_event(data);
     }
 
     // internal state changed (incoming event/timer), 
@@ -206,6 +208,22 @@ uint8_t swali_output_read_reg(swali_output_data_t * data, uint8_t reg)
         break;
     }
     return value;
+}
+
+static void send_control_event(swali_input_data_t * data)
+{
+    vscp_event_t tx_event;
+
+    tx_event.priority = VSCP_PRIORITY_MEDIUM;
+    tx_event.vscp_class = VSCP_CLASS1_CONTROL;
+    tx_event.size = 3;
+    tx_event.data[0] = data->swali_channel; // optional;
+    tx_event.data[1] = data->config->zone; // all zones;
+    tx_event.data[2] = data->config->subzone; // all subzones;
+
+    tx_event.vscp_type = VSCP_TYPE_CONTROL_TURNOFF;
+
+    swali_send_event(&tx_event);
 }
 
 static void send_info_event(swali_output_data_t * data)

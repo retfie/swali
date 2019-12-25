@@ -22,11 +22,7 @@
         <itemPath>../../src/common/swali/swali_output.h</itemPath>
       </logicalFolder>
       <logicalFolder name="util" displayName="util" projectFiles="true">
-        <itemPath>../../src/common/util/can.h</itemPath>
-        <itemPath>../../src/common/util/configuration.h</itemPath>
-        <itemPath>../../src/common/util/discrete.h</itemPath>
         <itemPath>../../src/common/util/led.h</itemPath>
-        <itemPath>../../src/common/util/systick.h</itemPath>
         <itemPath>../../src/common/util/time.h</itemPath>
       </logicalFolder>
       <logicalFolder name="vscp" displayName="vscp" projectFiles="true">
