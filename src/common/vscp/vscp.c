@@ -529,21 +529,20 @@ static void vscp_process_protocol_event(vscp_event_t * event)
             uint8_t i, j, k;
             uint8_t data[8];
 
+            k = 0;
             for (i = 0; i < 3; i++) // fill up with GUID
             {
                 data[0] = i;
-
+                
                 for (j = 1; j < 8; j++)
                 {
                     data[j] = vscp_guid(15 - k++);
-                    if (k > 16)
+                    if (k >= 16)
                         break;
                 }
-
-                if (k > 16)
+                if (k >= 16)
                     break;
-
-                vscp_send_protocol_event(VSCP_TYPE_PROTOCOL_PROBE_ACK, 8, data);
+                vscp_send_protocol_event(VSCP_TYPE_PROTOCOL_WHO_IS_THERE_RESPONSE, 8, data);
             }
 
             for (j = 0; j < 5; j++) // fill up previous event with MDF
@@ -554,7 +553,7 @@ static void vscp_process_protocol_event(vscp_event_t * event)
                     data[3 + j] = 0;
             }
 
-            vscp_send_protocol_event(VSCP_TYPE_PROTOCOL_PROBE_ACK, 8, data);
+            vscp_send_protocol_event(VSCP_TYPE_PROTOCOL_WHO_IS_THERE_RESPONSE, 8, data);
 
             k = 5; // start offset
             for (i = 3; i < 7; i++) // fill up with the rest of GUID
@@ -565,7 +564,7 @@ static void vscp_process_protocol_event(vscp_event_t * event)
                 {
                     data[j] = vscp_mdf(k++);
                 }
-                vscp_send_protocol_event(VSCP_TYPE_PROTOCOL_PROBE_ACK, 8, data);
+                vscp_send_protocol_event(VSCP_TYPE_PROTOCOL_WHO_IS_THERE_RESPONSE, 8, data);
             }
         }
         break;
