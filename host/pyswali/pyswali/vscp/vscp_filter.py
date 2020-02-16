@@ -1,4 +1,4 @@
-from uvscp_guid import guid
+from .vscp_guid import guid
 
 class event_filter():
     def __init__(self, priority, mask_priority, event_class, mask_class,

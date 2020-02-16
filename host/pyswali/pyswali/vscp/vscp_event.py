@@ -1,6 +1,6 @@
 import datetime
 import dateutil.parser
-from uvscp_guid import guid
+from .vscp_guid import guid
 
 class event():
     def __init__(self, vscp_class=0, vscp_type=0, data=bytearray(), obid=0,
